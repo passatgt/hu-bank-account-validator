@@ -28,7 +28,7 @@ function validateBankAccount(bankAccountNumber) {
 	//Validate the check digits.
 	const parts = [firstPart, secondPart];
 	const weights = [9, 7, 3, 1, 9, 7, 3, 1, 9, 7, 3, 1, 9, 7, 3, 1];
-
+	
 	for (let part of parts) {
 		let digits = part.toString().split('');
 		digits = digits.map(Number)
@@ -52,8 +52,31 @@ function validateBankAccount(bankAccountNumber) {
 	return {
 		bic: validBankCodes[bankCode].bicCode,
 		name: validBankCodes[bankCode].bankName,
-		number: formattedNumber
+		number: formattedNumber,
+		iban: calculateIBAN(bankAccountNumber)
 	};
+}
+
+function calculateIBAN(bankAccountNumber) {
+
+	//Rearrange for checksum calculation
+	const countryCode = 'HU';
+	const placeholders = '00';
+	const rearranged = bankAccountNumber + convertLettersToNumbers(countryCode) + placeholders;
+
+	//Convert rearranged string to BigInt
+	const rearrangedBigInt = BigInt(rearranged);
+
+	//Compute Mod-97 checksum
+	const checksum = 98n - (rearrangedBigInt % 97n);
+
+	//Format IBAN
+	const checkDigits = checksum.toString().padStart(2, '0'); //Always 2 digits
+	return `${countryCode}${checkDigits}${bankAccountNumber}`;
+}
+
+function convertLettersToNumbers(input) {
+	return input.split('').map(char => char.charCodeAt(0) - 55).join('');
 }
 
 module.exports = validateBankAccount;
