@@ -24,6 +24,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/passatgt/hu-bank-account-validator"
+    "url": "git+https://github.com/passatgt/hu-bank-account-validator.git"
   }
 }
