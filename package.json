@@ -1,6 +1,6 @@
 {
   "name": "hu-bank-account-validator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A utility to validate and format Hungarian bank account numbers.",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,6 @@
   "author": "Peter Viszt",
   "license": "MIT",
   "devDependencies": {
-    "axios": "^1.7.9",
     "fs": "^0.0.1-security",
     "jest": "^29.7.0",
     "xlsx": "^0.18.5"

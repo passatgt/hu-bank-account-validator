@@ -1,4 +1,3 @@
-const axios = require('axios');
 const xlsx = require('xlsx');
 const fs = require('fs');
 const path = require('path');
@@ -14,9 +13,9 @@ const fetchBankCodes = async () => {
     try {
         // Load the bicCodes.json file
         const bicCodes = JSON.parse(fs.readFileSync(bicCodesPath, 'utf8'));
-
-        const response = await axios.get(excelUrl, { responseType: 'arraybuffer' });
-        const workbook = xlsx.read(response.data, { type: 'buffer' });
+        const response = await fetch(excelUrl);
+        const arrayBuffer = await response.arrayBuffer();
+        const workbook = xlsx.read(arrayBuffer, { type: 'buffer' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = xlsx.utils.sheet_to_json(worksheet);
