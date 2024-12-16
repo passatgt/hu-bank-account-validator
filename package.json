@@ -1,0 +1,29 @@
+{
+  "name": "hu-bank-account-validator",
+  "version": "1.0.0",
+  "description": "A utility to validate and format Hungarian bank account numbers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "fetch-bank-codes": "node fetchBankCodes.js"
+  },
+  "keywords": [
+    "hungarian",
+    "bank account",
+    "validation",
+    "format",
+    "giro"
+  ],
+  "author": "Peter Viszt",
+  "license": "MIT",
+  "devDependencies": {
+    "axios": "^1.7.9",
+    "fs": "^0.0.1-security",
+    "jest": "^29.7.0",
+    "xlsx": "^0.18.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/passatgt/hu-bank-account-validator"
+  }
+}
