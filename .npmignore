@@ -1,5 +1,5 @@
-fetchBankCodes.js, 
-.gitignore, 
+fetchBankCodes.js
+.gitignore
 test/*
 assets/bicCodes.json
 assets/validBankCodes.json
