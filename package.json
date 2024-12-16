@@ -1,6 +1,6 @@
 {
   "name": "hu-bank-account-validator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A utility to validate and format Hungarian bank account numbers.",
   "main": "index.js",
   "scripts": {
