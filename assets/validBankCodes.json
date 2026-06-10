@@ -159,10 +159,6 @@
     "bicCode": "OBKLHUHB",
     "bankName": "Oberbank AG Magyarországi Fióktelep"
   },
-  "187": {
-    "bicCode": "OTPVHUHB",
-    "bankName": "OTP Bank Nyrt."
-  },
   "190": {
     "bicCode": "MANEHUHH",
     "bankName": "Magyar Nemzeti Bank"
@@ -183,10 +179,6 @@
     "bicCode": "OFSZHUHB",
     "bankName": "O.F.SZ. Zrt."
   },
-  "296": {
-    "bicCode": "BRELROBU",
-    "bankName": "Libra Internet Bank SA"
-  },
   "297": {
     "bicCode": "ELFZHUHH",
     "bankName": "Első Fedezetkezelő Zrt. Központi Fiók"
@@ -199,6 +191,10 @@
     "bicCode": "THZTHUHH",
     "bankName": "Trive Bank Hungary Zrt."
   },
+  "302": {
+    "bicCode": "REVOHUHB",
+    "bankName": "REVOLUT BANK UAB Magyarországi Fióktelep"
+  },
   "304": {
     "bicCode": "BBIXHUHH",
     "bankName": "BinX Zrt."
@@ -206,6 +202,22 @@
   "305": {
     "bicCode": "DIUALT22",
     "bankName": "DiPocket UAB"
+  },
+  "307": {
+    "bicCode": "CITFCZPP",
+    "bankName": "Citfin, sporitelni druzstvo"
+  },
+  "308": {
+    "bicCode": "HZMNHUHH",
+    "bankName": "HUNFedezetkezelő Zrt. Központi Fiók"
+  },
+  "310": {
+    "bicCode": "SLTPISRE",
+    "bankName": "TEYA ICELAND HF."
+  },
+  "311": {
+    "bicCode": "POLBHU22",
+    "bankName": "Polgári Bank Zrt."
   },
   "500": {
     "bicCode": "MKKBHUHB",
@@ -428,8 +440,8 @@
     "bankName": "MBH Bank Nyrt."
   },
   "612": {
-    "bicCode": "POLBHU22",
-    "bankName": "Polgári Bank Zrt."
+    "bicCode": "HBWEHUHB",
+    "bankName": "MagNet Bank Zrt."
   },
   "614": {
     "bicCode": "MKKBHUHB",
