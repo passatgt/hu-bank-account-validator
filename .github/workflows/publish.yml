@@ -1,0 +1,81 @@
+name: Publish to npm
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+  workflow_dispatch: {} # allow manual publishing of the current version
+
+# contents: write -> create the git tag and GitHub release.
+# id-token: write -> authenticate to npm via Trusted Publishing (OIDC), no token needed.
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Read package version
+        id: pkg
+        run: echo "version=v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Check if version already published
+        id: check
+        run: |
+          # Skip if this version was already tagged (i.e. already released).
+          if git rev-parse "refs/tags/${{ steps.pkg.outputs.version }}" >/dev/null 2>&1; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "Tag ${{ steps.pkg.outputs.version }} already exists, skipping."
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update npm
+        if: steps.check.outputs.publish == 'true'
+        # Trusted Publishing (OIDC) requires npm >= 11.5.1.
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        if: steps.check.outputs.publish == 'true'
+        run: npm ci
+
+      - name: Run tests
+        if: steps.check.outputs.publish == 'true'
+        run: npm test
+
+      - name: Publish to npm
+        if: steps.check.outputs.publish == 'true'
+        # No token needed: authenticated via OIDC Trusted Publishing.
+        # --provenance is signed automatically using the OIDC identity.
+        run: npm publish --provenance --access public
+
+      - name: Tag and create GitHub release
+        if: steps.check.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${{ steps.pkg.outputs.version }}"
+          git push origin "${{ steps.pkg.outputs.version }}"
+          gh release create "${{ steps.pkg.outputs.version }}" \
+            --title "${{ steps.pkg.outputs.version }}" \
+            --notes "Automated release: updated Hungarian bank codes from MNB."

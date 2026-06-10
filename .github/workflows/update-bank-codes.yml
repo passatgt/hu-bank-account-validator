@@ -1,0 +1,85 @@
+name: Update bank codes
+
+on:
+  schedule:
+    # Runs every Monday at 06:00 UTC. MNB updates the list monthly but the exact
+    # day varies, so we check weekly and only open a PR when the data changes.
+    - cron: "0 6 * * 1"
+  workflow_dispatch: {} # allow running manually from the Actions tab
+
+# Allow the workflow to push a branch and open a pull request.
+permissions:
+  contents: write
+  pull-requests: write
+
+# Prevent overlapping runs from racing on the branch / PR.
+concurrency:
+  group: update-bank-codes
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Fetch latest bank codes
+        run: npm run fetch-bank-codes
+
+      - name: Detect changes
+        id: diff
+        run: |
+          if git diff --quiet -- assets/validBankCodes.js assets/validBankCodes.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes in bank codes data."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Bank codes data changed."
+            git --no-pager diff --stat -- assets/validBankCodes.js assets/validBankCodes.json
+          fi
+
+      - name: Run tests
+        if: steps.diff.outputs.changed == 'true'
+        run: npm test
+
+      - name: Bump version
+        if: steps.diff.outputs.changed == 'true'
+        id: bump
+        run: |
+          # Bump the patch version without creating a commit or tag; the PR carries
+          # the version change and the publish workflow tags/releases on merge.
+          NEW_VERSION=$(npm version patch --no-git-tag-version)
+          echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create pull request
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: update-bank-codes
+          base: main
+          commit-message: "chore: update bank codes data (${{ steps.bump.outputs.version }})"
+          title: "chore: update bank codes (${{ steps.bump.outputs.version }})"
+          body: |
+            Automated update of Hungarian bank codes from MNB (`sht.xlsx`).
+
+            - Regenerated `assets/validBankCodes.js` and `assets/validBankCodes.json`.
+            - Bumped version to `${{ steps.bump.outputs.version }}`.
+
+            Merging this PR will publish the new version to npm.
+          labels: automated, bank-codes
+          delete-branch: true
+          add-paths: |
+            assets/validBankCodes.js
+            assets/validBankCodes.json
+            package.json
+            package-lock.json
